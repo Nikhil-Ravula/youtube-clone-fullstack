@@ -239,8 +239,9 @@ export const RazorpayCheckoutModal: React.FC = () => {
                   <h3 className="font-bold text-lg sm:text-xl tracking-tight text-white">
                     Razorpay Checkout
                   </h3>
-                  <span className="text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full uppercase tracking-wider">
-                    Test Sandbox
+                  <span className="text-[10px] font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-0.5 rounded-full uppercase tracking-wider flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                    Verified Secure
                   </span>
                 </div>
                 <p className="text-xs text-blue-200/80">
@@ -349,14 +350,14 @@ export const RazorpayCheckoutModal: React.FC = () => {
               {activeTab === "wallet" && <ChevronRight className="w-4 h-4 hidden md:block" />}
             </button>
 
-            {/* Sandbox Notice Box */}
-            <div className="mt-auto hidden md:block p-3 rounded-xl bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 text-[11px] text-blue-800 dark:text-blue-300">
-              <div className="font-semibold flex items-center gap-1 mb-1">
-                <Sparkles className="w-3.5 h-3.5 text-blue-600" />
-                <span>Sandbox Mode</span>
+            {/* Security Guarantee Box */}
+            <div className="mt-auto hidden md:block p-3 rounded-xl bg-gradient-to-br from-blue-50 to-indigo-50/60 dark:from-blue-950/40 dark:to-indigo-950/30 border border-blue-200/80 dark:border-blue-900/50 text-[11px] text-blue-900 dark:text-blue-200">
+              <div className="font-semibold flex items-center gap-1.5 mb-1 text-blue-700 dark:text-blue-300">
+                <ShieldCheck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                <span>Bank-Grade Encryption</span>
               </div>
-              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed">
-                Test mode active. No actual funds are charged. All plan features activate immediately.
+              <p className="text-zinc-600 dark:text-zinc-400 leading-relaxed text-[10px]">
+                End-to-end 256-bit SSL protection. Instant tier activation and official GST invoice upon completion.
               </p>
             </div>
           </div>
