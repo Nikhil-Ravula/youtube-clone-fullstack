@@ -3,6 +3,7 @@ import Sidebar from "@/components/Sidebar";
 import { MobileBottomNav } from "@/components/MobileBottomNav";
 import { Toaster } from "@/components/ui/sonner";
 import { SignInModal } from "@/components/SignInModal";
+import { RazorpayCheckoutModal } from "@/components/RazorpayCheckoutModal";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { UserProvider } from "../lib/AuthContext";
@@ -23,6 +24,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <title>YourTube Meet</title>
             <Toaster theme="dark" richColors closeButton duration={3000} position="bottom-right" />
             <SignInModal />
+            <RazorpayCheckoutModal />
             <Component {...pageProps} />
           </div>
         </SidebarProvider>
@@ -33,11 +35,12 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <UserProvider>
       <SidebarProvider>
-        <div className="min-h-screen bg-white text-black flex flex-col">
+        <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col transition-colors duration-150">
           <title>Your-Tube Clone</title>
           <Header />
           <Toaster richColors closeButton duration={3000} position="bottom-right" />
           <SignInModal />
+          <RazorpayCheckoutModal />
           <div className="flex flex-1">
             <Sidebar />
             <main className={`flex-1 min-w-0 ${!isWatchPage ? "pb-14 md:pb-0" : ""}`}>

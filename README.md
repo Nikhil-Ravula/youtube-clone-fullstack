@@ -18,6 +18,7 @@
 ## 📑 Table of Contents
 - [✨ Key Features](#-key-features)
   - [📺 YouTube Video Platform](#-youtube-video-platform)
+  - [📥 Controlled Video Download Management](#-controlled-video-download-management)
   - [📹 Real-Time WebRTC Video Meetings](#-real-time-webrtc-video-meetings)
   - [🔐 Authentication & Privacy](#-authentication--privacy)
 - [🏗️ System Architecture](#️-system-architecture)
@@ -39,14 +40,51 @@
 ## ✨ Key Features
 
 ### 📺 YouTube Video Platform
-* **Video Uploading & Streaming**: Upload videos with real-time progress bars and chunked multipart upload handling via Multer.
-* **Custom Interactive Player**: Feature-rich video player with custom play/pause, scrubbable seekbar, volume control, time duration counters, and fullscreen mode.
-* **Channel Management**:
+* **Fully Customized HTML5 Video Player**:
+  * **No Browser Default Controls**: Completely bespoke, high-performance HTML5 video player interface with modern glassmorphism aesthetics.
+  * **Interactive Playback Controls**: Draggable volume slider with smooth hover expansion, instant mute/unmute toggle, and variable playback speeds (`0.5×`, `0.75×`, `1×`, `1.25×`, `1.5×`, `1.75×`, `2×`).
+  * **Seeking & Skipping**: Instant 10-second forward/backward jump buttons (`RotateCw`, `RotateCcw`) and configurable interval skipping.
+  * **Viewing Modes**: Native Fullscreen (`f`), True Theater Mode (`t`) with full-width cinematic banner, and Picture-in-Picture (`p` / `i`) for background playback.
+  * **Timeline Hover Frame Previews**: Dual-canvas frame scrubbing providing real-time hover previews of video frames before seeking along with timestamp tooltips.
+  * **Dual Progress & Buffering Bar**: Visual indicators for buffer loading progress (`bufferedPercent`) and current playback time (`playedPercent`) with glowing scrubber handle.
+  * **Dynamic Time Display**: Toggle between elapsed duration (`MM:SS`) and remaining duration (`-MM:SS`) by clicking on the time counter.
+  * **Closed Captions & Subtitles**: Toggleable subtitles overlay (`c`) with customizable styling.
+  * **Quality Selector & Tier Gating**: Adaptive quality switcher (`480p SD`, `720p HD`, `1080p FHD`, `4K Ultra HD`) linked to active user subscription tiers.
+  * **Auto-Resume & Progress Persistence**: Remembers exact playback position locally and across devices via backend API (`/history/progress/:videoId`), auto-resumes with a floating notification and "Start over" option.
+  * **Configurable Completion Tracking**: Videos automatically marked as completed in user history after reaching 90% watch threshold with visual thumbnail progress bars.
+  * **Multi-Tab Concurrency Guard**: Inter-tab communication (`BroadcastChannel`) pauses playback automatically if the user starts watching another video in another tab or window.
+  * **Autoplay Countdown**: Sleek 5-second animated circular countdown with Up Next thumbnail, title preview, "Cancel", and "Play Now" triggers.
+  * **Auto-Hiding Controls**: Controls smoothly fade out after 2.8s of mouse inactivity during playback and instantly reappear on cursor motion, with cursor auto-hiding in fullscreen.
+  * **Comprehensive Desktop Keyboard Shortcuts**:
+    | Key Shortcut | Action |
+    | :--- | :--- |
+    | `Space` / `k` | Play / Pause |
+    | `←` / `→` | Seek backward / forward 10 seconds |
+    | `Shift` + `←` / `→` | Seek backward / forward 30 seconds |
+    | `j` / `l` | Seek backward / forward 10 seconds |
+    | `↑` / `↓` | Adjust volume up / down by 10% |
+    | `m` | Mute / Unmute audio |
+    | `f` | Toggle Fullscreen mode |
+    | `t` | Toggle Theater mode |
+    | `i` / `p` | Toggle Picture-in-Picture (PiP) |
+    | `c` | Toggle Subtitles / Closed Captions |
+    | `<` (Shift+,) / `>` (Shift+.) | Decrease / Increase playback speed |
+    | `n` (Shift+N) | Skip to Next video |
+    | `0` – `9` | Seek to 0% – 90% of video duration |
   * Create custom channels with names and descriptions.
   * Channel profile pages displaying all uploaded videos, banner placeholders, and live subscriber metrics.
 * **Engagement & Social Systems**:
   * **Like / Dislike**: Real-time counter updates with optimistic UI updates.
-  * **Comments System**: Threaded comments with timestamps, user profile avatars, and delete capabilities for video creators.
+  * **Advanced Multilingual Commenting & Moderation Suite**:
+    * **Multilingual Posting & Instant Translation**: Post comments in any language with on-the-fly machine translation into user-selected preferred languages (English, Hindi, Spanish, French, German, Japanese, Telugu, Tamil, Arabic, Russian, and 100+ global languages) via built-in `🌐 Translate` toggle and "See original" switcher.
+    * **Rich Comment Display**: Displays username, verified avatar, approximate user location (`📍 City, Country`), relative time with full UTC/IST hover timestamps, and `(edited)` status indicators.
+    * **Reactions & Nested Threading**: Real-time Like/Dislike counters, collapsible threaded replies with vertical connector guides, and `@username` auto-mentions highlighting.
+    * **15-Minute Edit Window & Soft-Delete Preservation**: Time-limited editing (15-minute window) to prevent post-discussion context shifting, edit history tracking, and soft-delete placeholders (*"[This comment was deleted by the author]"*) that keep child reply conversations intact.
+    * **Multi-Criteria Sorting**: Sort comments by **Newest first**, **Top / Most liked**, **Most relevant** (engagement score based on likes and replies), and **Oldest first**.
+    * **Automated Safety & Profanity Filtering**: Multi-language abusive word detection (English & Hindi/Hinglish slurs, leetspeak, and evasion patterns) that prevents hateful comments before publishing.
+    * **Anti-Spam & Flood Prevention**: Detection and blocking of repeated special characters, excessive emoji flooding, identical duplicate comments, and malicious URLs / phishing links.
+    * **Rate Limiting & Interactive CAPTCHA**: Sliding-window rate limiting protecting against rapid flooding (max 4 comments / 30s), dynamically prompting arithmetic CAPTCHA challenges when flooding is detected.
+    * **Predefined Reporting & Admin Review Queue**: Report comments for *Spam*, *Harassment*, *Hate speech*, *Misinformation*, or *Malicious links*. Flags comments for administrator review without automatic deletion by dislikes, with duplicate report prevention per user.
   * **Subscriptions**: Subscribe/Unsubscribe to channels with automatic live subscriber updates.
 * **Personalized Library**:
   * **Subscriptions Feed**: Dedicated feed showcasing videos exclusively from creators you follow.
@@ -59,6 +97,50 @@
 * **Responsive Multi-Device UI**:
   * Collapsible desktop sidebar drawer and compact icon mode.
   * Native app-style bottom navigation bar (`MobileBottomNav`) optimized for smartphones and tablets.
+
+---
+
+### 📥 Controlled Video Download Management
+* **Tiered Subscription Plans & Quotas**:
+  * **Free**: 1 video download per day (480p SD).
+  * **Bronze (₹199/mo)**: 5 video downloads per day (720p HD).
+  * **Silver (₹499/mo)**: 15 video downloads per day (1080p FHD).
+  * **Gold (₹999/mo)**: 50 video downloads per day (4K Ultra HD & unlimited capacity).
+* **Pre-Download Authorization & Security**:
+  * Verification of active subscription, daily remaining quota, and video file existence before generating secure streaming tokens.
+  * Automatic fallback to Free tier upon subscription expiration.
+* **Fair Use & 24-Hour Grace Period**:
+  * Duplicate re-downloads of the same video within 24 hours do not consume daily quota, protecting against network drops and multi-device access.
+* **Full Audit & Telemetry Logging**:
+  * Persistent records storing user ID, video ID, timestamp, IP address, device type, browser, OS, file size, plan used, and stream completion status (`completed`, `failed`).
+* **Dedicated Downloads & Offline Library**:
+  * Dedicated `/downloads` page displaying all downloaded videos, thumbnail previews, file sizes, live daily quota meters, and UTC midnight reset countdowns.
+  * Interactive Subscription Plan selector & upgrade modal.
+
+---
+
+### 💳 Comprehensive Subscription Management & Razorpay Integration
+* **Four Progressively Enhanced Tiers**:
+  * **Free**: Basic video access, 480p SD quality, 1 download/day, 30s preview on premium videos.
+  * **Bronze Plus**: 720p HD streaming, 5 downloads/day, 3-minute preview on premium content, 2 registered devices.
+  * **Silver Pro**: 1080p Full HD streaming, 15 downloads/day, 100% ad-free playback, offline downloads, priority CDN streaming, 4 devices.
+  * **Gold VIP**: 4K Ultra HD & 60fps streaming, 50 downloads/day, completely ad-free, exclusive access to Premium Courses & Masterclasses, VIP badge, 10 simultaneous devices, 24/7 priority support.
+* **Flexible Billing Cycles & Discounts**:
+  * Monthly, Quarterly (15% savings), and Yearly (25% savings + 2 months free) billing terms.
+* **Dedicated Subscription Dashboard (`/membership`)**:
+  * Interactive plan comparison cards and side-by-side feature comparison table.
+  * Live status monitor: active plan badge, remaining validity days/hours countdown, next renewal date, and auto-renewal toggle.
+  * Complete billing history ledger with invoice numbers, amounts, payment IDs, dates, and status tags (`PAID`, `FAILED`, `CANCELLED`).
+  * Modal view for official GST tax invoices and payment receipts with printable PDF formatting.
+* **Secure Razorpay Test Payment Integration**:
+  * Server-side order generation (`/membership/create-order`) and cryptographic HMAC-SHA256 signature verification (`/membership/verify-payment`).
+  * Seamless handling of successful payments, failed transactions, cancelled checkouts, network interruptions, and duplicate payment replay prevention.
+* **Automated Subscription Lifecycle & Expiry Guard**:
+  * Premium content & HD quality gating activated exclusively upon verified payment.
+  * Automatic downgrade to Free plan upon validity expiry, preserving all user channel uploads, playlists, liked videos, and watch history.
+  * 1-click renewal cancellation that keeps active benefits active until the end of the paid billing period.
+* **Instant Confirmation Emails**:
+  * Automated email dispatch via Nodemailer immediately after purchase containing tax invoice numbers, transaction IDs, payment receipts, validity dates, unlocked perks, and 24/7 support contact information.
 
 ---
 
@@ -81,9 +163,24 @@
 
 ---
 
-### 🔐 Authentication & Privacy
-* **Firebase Google Authentication**: One-click Google OAuth Single Sign-On (SSO) with persistent local sessions.
-* **Zero Hardcoded Secrets**: All sensitive keys, database URIs, and endpoints are securely loaded via `.env` files and guarded by `.gitignore`.
+### 🔐 Authentication, Time-Based Theme & Account Security
+* **Firebase Google Authentication & Quick Sign-In**:
+  * One-click Google OAuth Single Sign-On (SSO) with persistent local sessions and user profile synchronization.
+* **Automatic Time-Based Theme Adaptation (IST)**:
+  * **Automated Schedule**: Logins between **5:00 AM and 12:00 PM IST (UTC+05:30)** automatically enable the **Light theme**, while logins during all other periods default to the **Dark theme**.
+  * **User Profile Persistence**: The selected theme preference (`auto`, `light`, or `dark`) is stored in the user profile in MongoDB and synchronizes across sessions and devices.
+  * **Manual Theme Overrides**: Quick theme toggles in the global Header, User Avatar Dropdown, and Security Dashboard allowing instant manual switching at any time.
+* **Detailed Login Telemetry & Audit Logging**:
+  * Persistent MongoDB logging capturing public IP address, browser name and exact version (Chrome, Firefox, Edge, Safari), operating system (Windows, macOS, Android, iOS, Linux), device type (`Desktop`, `Mobile`, or `Tablet`), device model, timestamp, city, state, country, and approximate location.
+* **Adaptive Security & Anomaly-Triggered OTP Verification**:
+  * **Intelligent Anomaly Detection**: Whenever a login attempt originates from a **new browser**, **new device**, **new IP address**, or **different city/state**, the system enforces mandatory two-factor OTP verification.
+  * **Instant Security Email Dispatch**: Cryptographically secure 6-digit OTP code sent via Nodemailer with login details, device type, location, and security alerts.
+  * **Trusted Devices Management**: Upon successful OTP verification, users can mark the device/browser as trusted for **30 days** to avoid repeated prompts.
+* **Dedicated Account Security Page (`/security`)**:
+  * **Theme & Appearance Center**: Live IST clock indicator, schedule explanation, and one-click theme switching.
+  * **Trusted Devices List**: View active devices, browser/OS badges, IP addresses, locations, and remaining validity days, with single-click "Revoke Trust" and "Log Out of All Devices" actions.
+  * **Security Audit Trail**: Chronological event table tracking successful logins, OTP challenges, failed OTP attempts, and device revocations.
+* **Zero Hardcoded Secrets**: All sensitive API keys, database URIs, Razorpay secrets, and email credentials are securely loaded via `.env` and guarded by `.gitignore`.
 
 ---
 
@@ -276,7 +373,23 @@ cd youtube-clone-fullstack
 |---|---|---|
 | `POST` | `/video/uploadvideo` | Multipart upload for video files and metadata |
 | `GET` | `/video/getallvideo` | Retrieve all uploaded videos |
+| `GET` | `/video/access/:videoId` | Check video access gating, allowed quality, and preview watch timer |
+| `PATCH` | `/video/set-premium/:id` | Tag video as premium or exclusive course |
 | `PATCH` | `/video/views/:id` | Increment view counter for a specific video |
+
+### 💳 Membership & Subscriptions (`/membership`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/membership/plans` | Retrieve all plan tiers, billing cycles, features, and limits |
+| `GET` | `/membership/status/:userId` | Get user active plan, remaining days, renewal status, and auto-downgrade sync |
+| `POST` | `/membership/create-order` | Create Razorpay order and pending audit transaction record |
+| `POST` | `/membership/verify-payment` | Cryptographic HMAC verification, activate plan, and dispatch confirmation email |
+| `POST` | `/membership/payment-failed` | Log failed or cancelled payment attempt with failure reason |
+| `POST` | `/membership/cancel` | Cancel auto-renewal while keeping active benefits until expiry |
+| `POST` | `/membership/downgrade` | Switch account to Free tier or lower subscription plan |
+| `GET` | `/membership/history/:userId` | Get complete ledger of user billing history and invoices |
+| `GET` | `/membership/invoice/:invoiceNumber` | Fetch full tax invoice details for printable PDF receipt |
+| `POST` | `/membership/check-expirations` | Background job to sweep and downgrade expired accounts to Free plan |
 
 ### 💬 Comments & Likes (`/comment`, `/like`)
 | Method | Endpoint | Description |
@@ -293,6 +406,16 @@ cd youtube-clone-fullstack
 | `POST` | `/meeting/create` | Create a new video meeting room |
 | `GET` | `/meeting/validate/:roomId` | Verify room status and permissions |
 | `POST` | `/meeting/upload` | Upload and share a file attachment inside the meeting |
+
+### 📥 Video Downloads (`/download`)
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/download/quota/:userId` | Get user active plan, daily limit, used count, and reset countdown |
+| `POST` | `/download/authorize` | Pre-download authorization with quota and 24h grace period checks |
+| `GET` | `/download/file/:videoId` | Secure streaming attachment download with audit telemetry logging |
+| `GET` | `/download/user/:userId` | Get user's complete download history with video details |
+| `POST` | `/download/plan/upgrade` | Upgrade or switch subscription plan (Free, Bronze, Silver, Gold) |
+| `DELETE` | `/download/record/:id` | Remove a record from user's downloads history |
 
 ---
 
@@ -326,6 +449,12 @@ Peer A                                   Signaling Server (Socket.IO)           
 |---|---|---|
 | `PORT` | Yes | Express server port (default: `5000`) |
 | `DB_URL` | Yes | MongoDB Atlas cluster connection string |
+| `RAZORPAY_KEY_ID` | Optional | Razorpay Key ID (defaults to test mode key) |
+| `RAZORPAY_KEY_SECRET` | Optional | Razorpay Secret Key for HMAC-SHA256 signature verification |
+| `SMTP_HOST` | Optional | SMTP Host for invoice emails (falls back to Ethereal/mock) |
+| `SMTP_USER` | Optional | SMTP Username |
+| `SMTP_PASS` | Optional | SMTP Password |
+| `CLIENT_URL` | Optional | Client frontend origin URL (default: `http://localhost:3000`) |
 
 ### Frontend (`yourtube/.env.local`)
 | Variable | Required | Description |

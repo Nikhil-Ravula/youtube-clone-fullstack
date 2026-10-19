@@ -49,6 +49,18 @@ export default function VideoCard({ video }: any) {
             playsInline
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
           />
+
+          {/* Premium / Course Tag */}
+          {video?.isCourse ? (
+            <div className="absolute top-2 left-2 bg-gradient-to-r from-yellow-400 to-amber-500 text-black text-[10px] font-black px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
+              <span>★</span> COURSE
+            </div>
+          ) : video?.isPremium ? (
+            <div className="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-bold px-2 py-0.5 rounded-md shadow-md flex items-center gap-1">
+              <span>✦</span> PREMIUM
+            </div>
+          ) : null}
+
           <div className="absolute bottom-2 right-2 bg-black/80 text-white text-[11px] font-medium px-1.5 py-0.5 rounded">
             {isHovered ? "Previewing" : "HD"}
           </div>

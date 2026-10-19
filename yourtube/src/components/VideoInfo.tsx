@@ -18,6 +18,7 @@ import axiosInstance from "@/lib/axiosinstance";
 import { toast } from "sonner";
 import { formatSubscribers } from "@/lib/formatSubscribers";
 import { getMediaUrl } from "@/lib/mediaUrl";
+import { SubscriptionPlanModal } from "./SubscriptionPlanModal";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,8 +34,34 @@ const VideoInfo = ({ video }: any) => {
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [subscribersCount, setSubscribersCount] = useState(0);
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const { user } = useUser();
+  const { user, openSignInModal } = useUser();
   const [isWatchLater, setIsWatchLater] = useState(false);
+  const [isPlanModalOpen, setIsPlanModalOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [userQuota, setUserQuota] = useState<{
+    plan: string;
+    dailyLimit: number;
+    usedToday: number;
+    remainingToday: number;
+  } | null>(null);
+
+  const fetchQuota = async () => {
+    if (!user?._id) return;
+    try {
+      const res = await axiosInstance.get(`/download/quota/${user._id}`);
+      if (res.data) {
+        setUserQuota(res.data);
+      }
+    } catch (err) {
+      console.log("Could not fetch download quota:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (user?._id) {
+      fetchQuota();
+    }
+  }, [user?._id]);
 
   useEffect(() => {
     setlikes(video.Like || 0);
@@ -239,20 +266,75 @@ const VideoInfo = ({ video }: any) => {
     }
   };
 
-  const handleDownload = () => {
-    if (!video?.filepath) {
-      toast.error("Video file not available for download");
+  const handleDownload = async () => {
+    if (!user?._id) {
+      toast.error("Please sign in to download videos.");
+      if (openSignInModal) openSignInModal();
       return;
     }
-    const downloadUrl = getMediaUrl(video.filepath);
-    const anchor = document.createElement("a");
-    anchor.href = downloadUrl;
-    anchor.download = `${video.videotitle || "video"}.mp4`;
-    anchor.target = "_blank";
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    toast.success("Download started");
+
+    if (!video?._id) {
+      toast.error("Invalid video data.");
+      return;
+    }
+
+    setIsDownloading(true);
+    try {
+      // 1. Authorize download against user's subscription quota & 24h grace period
+      const authRes = await axiosInstance.post("/download/authorize", {
+        userId: user._id,
+        videoId: video._id,
+        deviceId: "web-client",
+      });
+
+      if (!authRes.data.authorized) {
+        toast.error(authRes.data.message || "Download not authorized.");
+        if (authRes.data.canUpgrade) {
+          setIsPlanModalOpen(true);
+        }
+        return;
+      }
+
+      // 2. Stream video file securely with attachment disposition
+      const backendBase =
+        process.env.NEXT_PUBLIC_BACKEND_URL ||
+        process.env.BACKEND_URL ||
+        "http://localhost:5000";
+      const cleanBase = backendBase.replace(/\/+$/, "");
+      const downloadUrl = `${cleanBase}/download/file/${video._id}?token=${authRes.data.downloadToken}&userId=${user._id}&deviceId=web-client`;
+
+      const anchor = document.createElement("a");
+      anchor.href = downloadUrl;
+      anchor.download = `${video.videotitle || "video"}.mp4`;
+      anchor.target = "_blank";
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+
+      if (authRes.data.isGracePeriod) {
+        toast.success("Re-downloading! (Within 24h grace period - No quota used)");
+      } else {
+        toast.success(
+          `Download started! Remaining today: ${authRes.data.remainingToday} (${authRes.data.plan} Plan)`
+        );
+      }
+
+      // Refresh remaining quota
+      fetchQuota();
+    } catch (err: any) {
+      console.error("Download failed:", err);
+      if (err.response?.status === 403) {
+        toast.error(
+          err.response?.data?.message ||
+            "You have reached your daily download limit. Upgrade your subscription plan for more downloads!"
+        );
+        setIsPlanModalOpen(true);
+      } else {
+        toast.error(err.response?.data?.message || "Failed to download video. Please check connection.");
+      }
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -356,16 +438,26 @@ const VideoInfo = ({ video }: any) => {
             Share
           </Button>
 
-          {/* Download button */}
+          {/* Controlled Download button */}
           <Button
             variant="ghost"
             size="sm"
-            className="bg-gray-100 hover:bg-gray-200 rounded-full"
+            disabled={isDownloading}
+            className="bg-gray-100 hover:bg-gray-200 rounded-full flex items-center gap-1.5 transition-all text-xs sm:text-sm"
             onClick={handleDownload}
-            title="Download video"
+            title={
+              userQuota
+                ? `Download video (${userQuota.remainingToday}/${userQuota.dailyLimit} remaining today on ${userQuota.plan} Plan)`
+                : "Download video (Controlled quota)"
+            }
           >
-            <Download className="w-4 h-4 mr-1.5" />
-            Download
+            <Download className={`w-4 h-4 ${isDownloading ? "animate-bounce text-red-600" : ""}`} />
+            <span>{isDownloading ? "Verifying..." : "Download"}</span>
+            {userQuota && (
+              <span className="text-[10px] font-bold bg-gray-200 px-1.5 py-0.5 rounded-full text-gray-700">
+                {userQuota.remainingToday}/{userQuota.dailyLimit}
+              </span>
+            )}
           </Button>
 
           {/* More options dropdown */}
@@ -423,6 +515,14 @@ const VideoInfo = ({ video }: any) => {
           {showFullDescription ? "Show less" : "Show more"}
         </Button>
       </div>
+
+      {/* Subscription Plans Modal */}
+      <SubscriptionPlanModal
+        isOpen={isPlanModalOpen}
+        onClose={() => setIsPlanModalOpen(false)}
+        currentPlan={userQuota?.plan || "Free"}
+        onPlanUpdated={() => fetchQuota()}
+      />
     </div>
   );
 };

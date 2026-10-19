@@ -7,6 +7,9 @@ import {
   History,
   User,
   Video,
+  Download,
+  Crown,
+  ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
@@ -28,7 +31,7 @@ const Sidebar = () => {
 
   if (!isOpen) {
     return (
-      <aside className="hidden md:flex w-18 bg-white border-r min-h-screen p-1 flex-col items-center gap-2 shrink-0">
+      <aside className="hidden md:flex w-18 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 min-h-screen p-1 flex-col items-center gap-2 shrink-0 transition-colors">
         <Link href="/" className="w-full">
           <Button
             variant="ghost"
@@ -56,6 +59,15 @@ const Sidebar = () => {
             <span>Subscriptions</span>
           </Button>
         </Link>
+        <Link href="/membership" className="w-full">
+          <Button
+            variant="ghost"
+            className="w-full flex-col h-auto py-3 px-1 gap-1 text-[10px] text-amber-700 hover:text-amber-800"
+          >
+            <Crown className="w-5 h-5 text-amber-500 fill-amber-500" />
+            <span>Premium</span>
+          </Button>
+        </Link>
         <Link href="/meet" className="w-full">
           <Button
             variant="ghost"
@@ -66,15 +78,35 @@ const Sidebar = () => {
           </Button>
         </Link>
         {user && (
-          <Link href="/history" className="w-full">
-            <Button
-              variant="ghost"
-              className="w-full flex-col h-auto py-3 px-1 gap-1 text-[10px]"
-            >
-              <History className="w-5 h-5" />
-              <span>History</span>
-            </Button>
-          </Link>
+          <>
+            <Link href="/downloads" className="w-full">
+              <Button
+                variant="ghost"
+                className="w-full flex-col h-auto py-3 px-1 gap-1 text-[10px]"
+              >
+                <Download className="w-5 h-5 text-zinc-700" />
+                <span>Downloads</span>
+              </Button>
+            </Link>
+            <Link href="/history" className="w-full">
+              <Button
+                variant="ghost"
+                className="w-full flex-col h-auto py-3 px-1 gap-1 text-[10px]"
+              >
+                <History className="w-5 h-5" />
+                <span>History</span>
+              </Button>
+            </Link>
+            <Link href="/security" className="w-full">
+              <Button
+                variant="ghost"
+                className="w-full flex-col h-auto py-3 px-1 gap-1 text-[10px] text-emerald-600 dark:text-emerald-400"
+              >
+                <ShieldCheck className="w-5 h-5 text-emerald-500" />
+                <span>Security</span>
+              </Button>
+            </Link>
+          </>
         )}
       </aside>
     );
@@ -89,7 +121,7 @@ const Sidebar = () => {
       />
 
       {/* Sidebar Drawer */}
-      <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white border-r min-h-screen p-2 transition-transform duration-200 shadow-2xl md:relative md:shadow-none md:z-auto shrink-0">
+      <aside className="fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-zinc-900 border-r border-zinc-200 dark:border-zinc-800 min-h-screen p-2 transition-transform duration-200 shadow-2xl md:relative md:shadow-none md:z-auto shrink-0 transition-colors">
         <nav className="space-y-1">
           <Link href="/" onClick={handleLinkClick}>
             <Button variant="ghost" className="w-full justify-start">
@@ -109,6 +141,12 @@ const Sidebar = () => {
               Subscriptions
             </Button>
           </Link>
+          <Link href="/membership" onClick={handleLinkClick}>
+            <Button variant="ghost" className="w-full justify-start text-amber-800 hover:text-amber-900 hover:bg-amber-50">
+              <Crown className="w-5 h-5 mr-3 text-amber-500 fill-amber-500" />
+              Membership Plans
+            </Button>
+          </Link>
           <Link href="/meet" onClick={handleLinkClick}>
             <Button variant="ghost" className="w-full justify-start text-red-600 hover:text-red-700">
               <Video className="w-5 h-5 mr-3 text-red-600" />
@@ -119,6 +157,12 @@ const Sidebar = () => {
           {user && (
             <>
               <div className="border-t pt-2 mt-2">
+                <Link href="/downloads" onClick={handleLinkClick}>
+                  <Button variant="ghost" className="w-full justify-start text-zinc-800 dark:text-zinc-200">
+                    <Download className="w-5 h-5 mr-3 text-zinc-700" />
+                    Downloads
+                  </Button>
+                </Link>
                 <Link href="/history" onClick={handleLinkClick}>
                   <Button variant="ghost" className="w-full justify-start">
                     <History className="w-5 h-5 mr-3" />
@@ -135,6 +179,12 @@ const Sidebar = () => {
                   <Button variant="ghost" className="w-full justify-start">
                     <Clock className="w-5 h-5 mr-3" />
                     Watch later
+                  </Button>
+                </Link>
+                <Link href="/security" onClick={handleLinkClick}>
+                  <Button variant="ghost" className="w-full justify-start text-emerald-700 dark:text-emerald-400 hover:text-emerald-800">
+                    <ShieldCheck className="w-5 h-5 mr-3 text-emerald-500" />
+                    Security & Devices
                   </Button>
                 </Link>
                 {user?.channelname ? (

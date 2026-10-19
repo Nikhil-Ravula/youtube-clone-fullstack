@@ -1,4 +1,4 @@
-import { Bell, Menu, Mic, MicOff, Search, User, Upload, Video, ArrowLeft } from "lucide-react";
+import { Bell, Menu, Mic, MicOff, Search, User, Upload, Video, ArrowLeft, Crown, Sparkles, ShieldCheck, Sun, Moon } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
@@ -19,7 +19,7 @@ import { useSidebar } from "@/lib/SidebarContext";
 import { toast } from "sonner";
 
 const Header = () => {
-  const { user, logout, handlegooglesignin } = useUser();
+  const { user, logout, handlegooglesignin, theme, themePreference, updateTheme } = useUser();
   const { toggleSidebar } = useSidebar();
   const [searchQuery, setSearchQuery] = useState("");
   const [isdialogeopen, setisdialogeopen] = useState(false);
@@ -104,7 +104,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex items-center justify-between px-2 sm:px-4 py-2 bg-white border-b sticky top-0 z-30 h-14">
+    <header className="flex items-center justify-between px-2 sm:px-4 py-2 bg-white dark:bg-zinc-900 border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-30 h-14 transition-colors">
       {isMobileSearchOpen ? (
         /* Mobile Search Bar Mode */
         <div className="flex items-center w-full gap-2 animate-in fade-in duration-150">
@@ -242,6 +242,23 @@ const Header = () => {
               <Video className="w-5 h-5 text-red-600" />
             </Button>
 
+            {/* Membership & Subscription Plans Button */}
+            <Link href="/membership">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 px-2 sm:px-2.5 gap-1.5 text-xs font-semibold text-amber-800 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-full transition-all"
+                title="Subscription Plans & Membership Dashboard"
+              >
+                <Crown className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                <span className="hidden sm:inline">
+                  {user?.subscriptionPlan && user.subscriptionPlan !== "Free"
+                    ? `${user.subscriptionPlan} VIP`
+                    : "Plans"}
+                </span>
+              </Button>
+            </Link>
+
             {user ? (
               <>
                 {/* Upload video (desktop/tablet) */}
@@ -253,6 +270,21 @@ const Header = () => {
                   className="hidden sm:inline-flex h-9 w-9 text-zinc-700 hover:text-zinc-900 transition-colors"
                 >
                   <Upload className="w-5 h-5" />
+                </Button>
+
+                {/* Quick Theme Toggle Button */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => updateTheme(theme === "dark" ? "light" : "dark")}
+                  title={theme === "dark" ? "Switch to Light theme" : "Switch to Dark theme"}
+                  className="h-9 w-9 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="w-5 h-5 text-amber-400" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-zinc-700" />
+                  )}
                 </Button>
 
                 {/* Notifications (desktop/tablet) */}
@@ -286,7 +318,42 @@ const Header = () => {
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuContent className="w-60" align="end" forceMount>
+                    <div className="px-2 py-1.5 border-b mb-1">
+                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{user.name || "User"}</p>
+                      <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
+                      <span className="inline-block mt-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                        {user.subscriptionPlan || "Free"} Plan
+                      </span>
+                    </div>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/security" className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1.5">
+                        <ShieldCheck className="w-4 h-4 text-emerald-500" />
+                        Account Security & Devices
+                      </Link>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onClick={() => updateTheme(theme === "dark" ? "light" : "dark")}
+                      className="flex items-center justify-between cursor-pointer"
+                    >
+                      <span className="flex items-center gap-1.5 text-zinc-800 dark:text-zinc-200">
+                        {theme === "dark" ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-zinc-600" />}
+                        Appearance: {theme === "dark" ? "Dark" : "Light"}
+                      </span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-500 capitalize">
+                        {themePreference}
+                      </span>
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem asChild>
+                      <Link href="/membership" className="font-semibold text-red-600 flex items-center gap-1.5">
+                        <Crown className="w-4 h-4 text-amber-500" />
+                        Membership & Plans
+                      </Link>
+                    </DropdownMenuItem>
+
                     {user?.channelname ? (
                       <DropdownMenuItem asChild>
                         <Link href={`/channel/${user?._id}`}>Your channel</Link>
@@ -303,6 +370,9 @@ const Header = () => {
                         </Button>
                       </div>
                     )}
+                    <DropdownMenuItem asChild>
+                      <Link href="/downloads">Downloads & Offline</Link>
+                    </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/meet">Video Meetings</Link>
                     </DropdownMenuItem>
@@ -321,14 +391,29 @@ const Header = () => {
                 </DropdownMenu>
               </>
             ) : (
-              <Button
-                size="sm"
-                className="flex items-center gap-1.5 px-3 py-1 text-xs sm:text-sm h-8"
-                onClick={handlegooglesignin}
-              >
-                <User className="w-3.5 h-3.5" />
-                <span>Sign in</span>
-              </Button>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => updateTheme(theme === "dark" ? "light" : "dark")}
+                  title={theme === "dark" ? "Switch to Light theme" : "Switch to Dark theme"}
+                  className="h-9 w-9 text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                >
+                  {theme === "dark" ? (
+                    <Sun className="w-5 h-5 text-amber-400" />
+                  ) : (
+                    <Moon className="w-5 h-5 text-zinc-700" />
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  className="flex items-center gap-1.5 px-3 py-1 text-xs sm:text-sm h-8"
+                  onClick={handlegooglesignin}
+                >
+                  <User className="w-3.5 h-3.5" />
+                  <span>Sign in</span>
+                </Button>
+              </div>
             )}
           </div>
         </>

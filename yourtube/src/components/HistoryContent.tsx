@@ -100,6 +100,20 @@ export default function HistoryContent() {
                     src={videoSrc}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
+                  {/* Watched progress bar along the bottom of the thumbnail */}
+                  {item.watchPercentage > 0 && (
+                    <div className="absolute inset-x-0 bottom-0 h-1 bg-black/60">
+                      <div
+                        className="h-full bg-red-600"
+                        style={{ width: `${Math.min(100, item.watchPercentage)}%` }}
+                      />
+                    </div>
+                  )}
+                  {item.isCompleted && (
+                    <div className="absolute top-1 left-1 bg-black/80 text-white text-[10px] font-bold px-1.5 py-0.2 rounded">
+                      Watched
+                    </div>
+                  )}
                 </div>
               </Link>
 

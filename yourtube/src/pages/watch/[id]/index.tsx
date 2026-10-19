@@ -16,6 +16,7 @@ const WatchPage = () => {
   const [currentVideo, setCurrentVideo] = useState<any>(null);
   const [allVideos, setAllVideos] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isTheaterMode, setIsTheaterMode] = useState(false);
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -83,26 +84,66 @@ const WatchPage = () => {
     );
   }
 
+  const relatedVideosList = allVideos.filter((v: any) => v._id !== id);
+  const nextVideo = relatedVideosList[0] || null;
+
   return (
     <>
       <Head>
         <title>{`${currentVideo.videotitle || "Watch"} - YourTube`}</title>
       </Head>
       <div className="min-h-screen bg-white w-full">
-        <div className="max-w-[1750px] mx-auto p-2 sm:p-4 md:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 space-y-4">
-              <VideoPlayer video={currentVideo} />
-              <VideoInfo video={currentVideo} />
-              <Comments videoId={id} />
+        {isTheaterMode ? (
+          // Theater Mode Layout: Full-width player banner across the top
+          <div>
+            <div className="bg-black w-full flex justify-center py-2 sm:py-4 px-2 sm:px-6">
+              <div className="w-full max-w-[1700px]">
+                <VideoPlayer
+                  video={currentVideo}
+                  isTheaterMode={isTheaterMode}
+                  onToggleTheaterMode={() => setIsTheaterMode(false)}
+                  nextVideo={nextVideo}
+                  onNextVideo={() => {
+                    if (nextVideo) router.push(`/watch/${nextVideo._id}`);
+                  }}
+                />
+              </div>
             </div>
-            <div className="space-y-4">
-              <RelatedVideos
-                videos={allVideos.filter((v: any) => v._id !== id)}
-              />
+            <div className="max-w-[1750px] mx-auto p-3 sm:p-6">
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2 space-y-4">
+                  <VideoInfo video={currentVideo} />
+                  <Comments videoId={id} />
+                </div>
+                <div className="space-y-4">
+                  <RelatedVideos videos={relatedVideosList} />
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        ) : (
+          // Default Layout
+          <div className="max-w-[1750px] mx-auto p-2 sm:p-4 md:p-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div className="lg:col-span-2 space-y-4">
+                <VideoPlayer
+                  video={currentVideo}
+                  isTheaterMode={isTheaterMode}
+                  onToggleTheaterMode={() => setIsTheaterMode(true)}
+                  nextVideo={nextVideo}
+                  onNextVideo={() => {
+                    if (nextVideo) router.push(`/watch/${nextVideo._id}`);
+                  }}
+                />
+                <VideoInfo video={currentVideo} />
+                <Comments videoId={id} />
+              </div>
+              <div className="space-y-4">
+                <RelatedVideos videos={relatedVideosList} />
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

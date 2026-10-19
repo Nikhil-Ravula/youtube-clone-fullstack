@@ -13,6 +13,8 @@ import historyrroutes from "./routes/history.js";
 import commentroutes from "./routes/comment.js";
 import meetingroutes from "./routes/meeting.js";
 import subscriptionroutes from "./routes/subscription.js";
+import downloadroutes from "./routes/download.js";
+import membershiproutes from "./routes/membership.js";
 import { initializeSocket } from "./socket.js";
 
 dotenv.config();
@@ -40,6 +42,8 @@ app.use("/history", historyrroutes);
 app.use("/comment", commentroutes);
 app.use("/meeting", meetingroutes);
 app.use("/subscription", subscriptionroutes);
+app.use("/download", downloadroutes);
+app.use("/membership", membershiproutes);
 
 const PORT = process.env.PORT || 5000;
 
