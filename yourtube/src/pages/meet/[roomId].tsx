@@ -204,7 +204,7 @@ export default function MeetingRoomPage() {
 
   if (!roomId || typeof roomId !== "string") {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white flex items-center justify-center transition-colors duration-150">
         <Loader2 className="w-8 h-8 animate-spin text-red-600" />
       </div>
     );
@@ -212,13 +212,13 @@ export default function MeetingRoomPage() {
 
   if (roomError) {
     return (
-      <div className="min-h-screen bg-zinc-950 text-white flex flex-col items-center justify-center p-6 text-center space-y-5">
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col items-center justify-center p-6 text-center space-y-5 transition-colors duration-150">
         <div className="w-16 h-16 rounded-3xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-500 shadow-lg">
           <AlertCircle className="w-8 h-8" />
         </div>
         <div className="space-y-2 max-w-md">
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white">Invalid Meeting Code</h2>
-          <p className="text-sm text-zinc-400 leading-relaxed">{roomError}</p>
+          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-900 dark:text-white">Invalid Meeting Code</h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{roomError}</p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 w-full max-w-sm pt-2">
           <button
@@ -239,7 +239,7 @@ export default function MeetingRoomPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
       </Head>
 
-      <div className="min-h-screen bg-zinc-950 text-white flex flex-col">
+      <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col transition-colors duration-150">
         {!hasJoined ? (
           <>
             <PreJoinScreen

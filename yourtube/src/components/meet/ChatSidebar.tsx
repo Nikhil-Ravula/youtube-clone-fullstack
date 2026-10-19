@@ -112,16 +112,16 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
   const emojis = ["👍", "❤️", "🔥", "🎉", "👏", "😂", "🚀", "💡", "🙌", "✨"];
 
   return (
-    <div className="fixed inset-0 z-50 md:relative md:inset-auto md:w-80 lg:w-96 md:z-20 w-full h-full bg-zinc-950 border-l border-zinc-800 flex flex-col transition-all duration-300">
+    <div className="fixed inset-0 z-50 md:relative md:inset-auto md:w-80 lg:w-96 md:z-20 w-full h-full bg-white dark:bg-zinc-950 border-l border-zinc-200 dark:border-zinc-800 text-zinc-900 dark:text-zinc-100 flex flex-col transition-colors duration-150">
       {/* Header */}
-      <div className="p-4 border-b border-zinc-800 flex items-center justify-between">
+      <div className="p-4 border-b border-zinc-200 dark:border-zinc-800 flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-sm text-zinc-100">In-call Messages</h3>
-          <p className="text-[11px] text-zinc-400">Messages are visible to participants</p>
+          <h3 className="font-semibold text-sm text-zinc-900 dark:text-zinc-100">In-call Messages</h3>
+          <p className="text-[11px] text-zinc-500 dark:text-zinc-400">Messages are visible to participants</p>
         </div>
         <button
           onClick={onClose}
-          className="p-2 rounded-xl bg-zinc-900 md:bg-transparent hover:bg-zinc-800 text-zinc-300 hover:text-white transition-colors"
+          className="p-2 rounded-xl bg-zinc-100 dark:bg-zinc-900 md:bg-transparent hover:bg-zinc-200 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white transition-colors"
           title="Close chat"
         >
           <X className="w-5 h-5 md:w-4 md:h-4" />
@@ -130,8 +130,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
 
       {/* Notice if chat disabled */}
       {!allowChat && !isHostOrCoHost && (
-        <div className="bg-amber-950/40 border-b border-amber-600/30 p-2.5 flex items-center gap-2 text-xs text-amber-300">
-          <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+        <div className="bg-amber-100 dark:bg-amber-950/40 border-b border-amber-300 dark:border-amber-600/30 p-2.5 flex items-center gap-2 text-xs text-amber-800 dark:text-amber-300">
+          <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
           <span>Chat has been disabled by the meeting host.</span>
         </div>
       )}
@@ -140,15 +140,15 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       <div className="flex-1 overflow-y-auto p-4 space-y-3">
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center text-center text-zinc-500 text-xs py-8">
-            <p className="font-medium text-zinc-400">No messages yet</p>
-            <p className="text-[11px] mt-1">Send a message to everyone in the call</p>
+            <p className="font-medium text-zinc-600 dark:text-zinc-400">No messages yet</p>
+            <p className="text-[11px] mt-1 text-zinc-400 dark:text-zinc-500">Send a message to everyone in the call</p>
           </div>
         ) : (
           messages.map((msg) => {
             if (msg.type === "system") {
               return (
                 <div key={msg.id} className="text-center my-2">
-                  <span className="text-[11px] bg-zinc-900 text-zinc-400 px-3 py-1 rounded-full border border-zinc-800">
+                  <span className="text-[11px] bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 px-3 py-1 rounded-full border border-zinc-200 dark:border-zinc-800">
                     {msg.message}
                   </span>
                 </div>
@@ -163,19 +163,19 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                 className={`flex flex-col ${isSelf ? "items-end" : "items-start"}`}
               >
                 <div className="flex items-baseline gap-1.5 mb-1 px-1">
-                  <span className="text-xs font-semibold text-zinc-300">
+                  <span className="text-xs font-semibold text-zinc-700 dark:text-zinc-300">
                     {isSelf ? "You" : msg.senderName}
                   </span>
-                  <span className="text-[10px] text-zinc-500">
+                  <span className="text-[10px] text-zinc-400 dark:text-zinc-500">
                     {new Date(msg.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                   </span>
                 </div>
 
                 <div
-                  className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs break-words shadow-sm ${
+                  className={`max-w-[85%] rounded-2xl px-3.5 py-2 text-xs break-words shadow-xs ${
                     isSelf
                       ? "bg-red-600 text-white rounded-tr-none"
-                      : "bg-zinc-800 text-zinc-200 rounded-tl-none border border-zinc-700/50"
+                      : "bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-200 rounded-tl-none border border-zinc-200 dark:border-zinc-700/50"
                   }`}
                 >
                   {/* File preview if present */}
@@ -190,8 +190,8 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                           />
                         </a>
                       ) : (
-                        <div className="flex items-center gap-2 p-2 bg-black/30 rounded-xl">
-                          <FileText className="w-6 h-6 text-zinc-300 shrink-0" />
+                        <div className="flex items-center gap-2 p-2 bg-black/10 dark:bg-black/30 rounded-xl">
+                          <FileText className="w-6 h-6 text-zinc-600 dark:text-zinc-300 shrink-0" />
                           <div className="truncate flex-1">
                             <p className="font-medium truncate">{msg.fileName}</p>
                             <p className="text-[10px] opacity-75">{formatFileSize(msg.fileSize)}</p>
@@ -201,7 +201,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
                             download={msg.fileName}
                             target="_blank"
                             rel="noreferrer"
-                            className="p-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+                            className="p-1.5 rounded-lg bg-black/10 dark:bg-white/20 hover:bg-black/20 dark:hover:bg-white/30 transition-colors"
                             title="Download file"
                           >
                             <Download className="w-3.5 h-3.5" />
@@ -221,13 +221,13 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       </div>
 
       {/* Quick Emojis Bar */}
-      <div className="px-3 py-1.5 border-t border-zinc-900 bg-zinc-950/60 flex items-center justify-between overflow-x-auto">
+      <div className="px-3 py-1.5 border-t border-zinc-200 dark:border-zinc-900 bg-zinc-50 dark:bg-zinc-950/60 flex items-center justify-between overflow-x-auto">
         {emojis.map((emoji) => (
           <button
             key={emoji}
             onClick={() => onSendMessage(emoji)}
             disabled={!allowChat && !isHostOrCoHost}
-            className="hover:scale-125 transition-transform p-1 text-sm rounded hover:bg-zinc-800 disabled:opacity-40"
+            className="hover:scale-125 transition-transform p-1 text-sm rounded hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-40"
           >
             {emoji}
           </button>
@@ -235,7 +235,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
       </div>
 
       {/* Input Box */}
-      <div className="p-3 border-t border-zinc-800 bg-zinc-900/60">
+      <div className="p-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/80 dark:bg-zinc-900/60">
         <form onSubmit={handleSend} className="flex items-center gap-2">
           {/* File Attachment Input */}
           <input
@@ -248,7 +248,7 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             type="button"
             onClick={() => fileInputRef.current?.click()}
             disabled={(!allowChat && !isHostOrCoHost) || isUploading}
-            className="p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-zinc-800 disabled:opacity-40 transition-colors"
+            className="p-2 rounded-xl text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-200 dark:hover:bg-zinc-800 disabled:opacity-40 transition-colors"
             title="Attach file (up to 25MB)"
           >
             {isUploading ? <Loader2 className="w-4 h-4 animate-spin text-red-500" /> : <Paperclip className="w-4 h-4" />}
@@ -263,14 +263,14 @@ export const ChatSidebar: React.FC<ChatSidebarProps> = ({
             placeholder={
               !allowChat && !isHostOrCoHost ? "Chat disabled by host" : "Send a message to everyone..."
             }
-            className="flex-1 bg-zinc-900 border border-zinc-700/60 focus:border-red-500 focus:outline-none rounded-xl px-3 py-2 text-xs text-white placeholder-zinc-500 disabled:opacity-50"
+            className="flex-1 bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/60 focus:border-red-500 focus:outline-none rounded-xl px-3 py-2 text-xs text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 disabled:opacity-50 shadow-xs"
           />
 
           {/* Submit */}
           <button
             type="submit"
             disabled={!inputText.trim() || (!allowChat && !isHostOrCoHost)}
-            className="p-2 rounded-xl bg-red-600 hover:bg-red-700 text-white disabled:opacity-40 transition-colors shadow-md"
+            className="p-2 rounded-xl bg-red-600 hover:bg-red-700 text-white disabled:opacity-40 transition-colors shadow-md cursor-pointer"
             title="Send"
           >
             <Send className="w-4 h-4" />

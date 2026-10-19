@@ -83,11 +83,11 @@ export const PreJoinScreen: React.FC<PreJoinScreenProps> = ({
   const hasVideo = localStream && localStream.getVideoTracks().length > 0 && !isCameraOff;
 
   return (
-    <div className="min-h-[100dvh] bg-zinc-950 text-white flex flex-col items-center justify-center p-3 sm:p-6 md:p-8">
+    <div className="min-h-[100dvh] bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 transition-colors duration-200">
       <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center py-2">
         {/* Left / Top: Live Camera & Audio Preview Tile */}
         <div className="lg:col-span-7 flex flex-col items-center w-full">
-          <div className="relative w-full aspect-video bg-zinc-900 rounded-2xl sm:rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl flex items-center justify-center group">
+          <div className="relative w-full aspect-video bg-zinc-900 rounded-2xl sm:rounded-3xl overflow-hidden border border-zinc-300 dark:border-zinc-800 shadow-2xl flex items-center justify-center group">
             <video
               ref={(el) => {
                 videoRef.current = el;
@@ -157,7 +157,7 @@ export const PreJoinScreen: React.FC<PreJoinScreenProps> = ({
           </div>
 
           {/* Audio / Mic Warning or Indicator */}
-          <div className="mt-2.5 sm:mt-3 flex items-center gap-2 text-xs text-zinc-400">
+          <div className="mt-2.5 sm:mt-3 flex items-center gap-2 text-xs text-zinc-600 dark:text-zinc-400">
             <span className={`w-2 h-2 rounded-full ${isMuted ? "bg-rose-500" : "bg-emerald-500"}`} />
             <span>{isMuted ? "Microphone is muted" : "Microphone ready"}</span>
           </div>
@@ -166,37 +166,37 @@ export const PreJoinScreen: React.FC<PreJoinScreenProps> = ({
         {/* Right / Bottom: Meeting Info & Join Action */}
         <div className="lg:col-span-5 flex flex-col justify-center space-y-6">
           <div className="space-y-2">
-            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 border border-red-600/30 text-red-500 text-xs font-semibold">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 border border-red-600/30 text-red-600 dark:text-red-500 text-xs font-semibold">
               <ShieldCheck className="w-3.5 h-3.5" />
               <span>YourTube Secure Meet</span>
             </div>
-            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-zinc-900 dark:text-white">
               {meetingTitle || "Ready to join?"}
             </h1>
-            <p className="text-xs text-zinc-400">
+            <p className="text-xs text-zinc-500 dark:text-zinc-400">
               No one else is in the call yet (or waiting for you)
             </p>
           </div>
 
           {/* Room ID Badge & Copy */}
-          <div className="flex items-center justify-between p-3.5 bg-zinc-900 border border-zinc-800 rounded-2xl">
+          <div className="flex items-center justify-between p-3.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-xs">
             <div>
               <span className="text-[11px] text-zinc-500 block uppercase font-mono tracking-wider">Room Code</span>
-              <span className="text-sm font-mono font-semibold text-zinc-200">{roomId}</span>
+              <span className="text-sm font-mono font-semibold text-zinc-900 dark:text-zinc-200">{roomId}</span>
             </div>
             <button
               type="button"
               onClick={handleCopyLink}
-              className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
+              className="p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 transition-colors"
               title="Copy link"
             >
-              {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+              {copied ? <Check className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-4 h-4" />}
             </button>
           </div>
 
           {/* Error Message if any */}
           {errorMessage && (
-            <div className="p-3.5 bg-rose-950/40 border border-rose-800/50 rounded-2xl flex items-start gap-2.5 text-xs text-rose-300">
+            <div className="p-3.5 bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800/50 rounded-2xl flex items-start gap-2.5 text-xs text-rose-700 dark:text-rose-300">
               <AlertTriangle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
               <span>{errorMessage}</span>
             </div>
@@ -205,16 +205,16 @@ export const PreJoinScreen: React.FC<PreJoinScreenProps> = ({
           {/* Name Form & Join Button */}
           <form onSubmit={handleJoinClick} className="space-y-4">
             <div className="space-y-1.5">
-              <label className="text-xs font-medium text-zinc-300">Your Display Name</label>
+              <label className="text-xs font-medium text-zinc-700 dark:text-zinc-300">Your Display Name</label>
               <div className="relative">
-                <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-500" />
+                <User className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-zinc-400 dark:text-zinc-500" />
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="Enter your name"
                   required
-                  className="w-full bg-zinc-900 border border-zinc-700/80 focus:border-red-500 focus:outline-none rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-zinc-500 transition-colors shadow-inner"
+                  className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 focus:border-red-500 focus:outline-none rounded-xl pl-10 pr-4 py-3 text-sm text-zinc-900 dark:text-white placeholder-zinc-400 dark:placeholder-zinc-500 transition-colors shadow-xs"
                 />
               </div>
             </div>

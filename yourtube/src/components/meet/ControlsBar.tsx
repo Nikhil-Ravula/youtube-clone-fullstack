@@ -129,28 +129,28 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
   const reactionsList = ["👍", "❤️", "👏", "😂", "😮", "🎉", "🔥", "✋"];
 
   return (
-    <div className="relative w-full bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-800/90 px-1.5 sm:px-4 py-2 sm:py-3 z-30 select-none shrink-0">
+    <div className="relative w-full bg-white/95 dark:bg-zinc-950/95 backdrop-blur-xl border-t border-zinc-200 dark:border-zinc-800/90 px-1.5 sm:px-4 py-2 sm:py-3 z-30 select-none shrink-0 transition-colors duration-150">
       <div className="flex items-center justify-center sm:justify-between gap-1.5 sm:gap-2 max-w-full">
         {/* Left Section (Desktop only: Time, Room ID, Copy Link, Recording indicator) */}
         <div className="hidden sm:flex items-center gap-2 shrink-0">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 border border-zinc-800 rounded-lg text-xs font-medium text-zinc-300">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs font-medium text-zinc-700 dark:text-zinc-300 shadow-xs">
             <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             <span className="font-mono text-[11px] sm:text-xs">{formatTime(callDuration)}</span>
           </div>
 
           <button
             onClick={handleCopyLink}
-            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 rounded-lg text-xs text-zinc-400 hover:text-white transition-colors"
+            className="hidden md:flex items-center gap-1.5 px-2.5 py-1 bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 rounded-lg text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors shadow-xs"
             title="Copy meeting link"
           >
             <span className="font-mono text-[11px]">{roomId}</span>
-            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
           {/* Recording Banner */}
           {isRecording && (
-            <div className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 bg-rose-950/80 border border-rose-600/40 rounded-lg text-rose-300 text-[10px] sm:text-xs font-semibold animate-pulse">
-              <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500" />
+            <div className="flex items-center gap-1 px-2 py-0.5 sm:px-2.5 sm:py-1 bg-rose-100 dark:bg-rose-950/80 border border-rose-300 dark:border-rose-600/40 rounded-lg text-rose-700 dark:text-rose-300 text-[10px] sm:text-xs font-semibold animate-pulse">
+              <Radio className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-600 dark:text-rose-500" />
               <span>REC {formatTime(recordingDuration)}</span>
             </div>
           )}
@@ -165,7 +165,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               className={`p-2.5 sm:p-3 rounded-full sm:rounded-none sm:rounded-l-full flex items-center justify-center transition-all ${
                 isMuted
                   ? "bg-rose-600 hover:bg-rose-700 text-white"
-                  : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                  : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
               }`}
               title={isMuted ? "Unmute microphone (Ctrl+D)" : "Mute microphone (Ctrl+D)"}
             >
@@ -175,38 +175,40 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className={`p-3 pl-1 pr-2 rounded-r-full border-l border-zinc-700/50 transition-all ${
-                      isMuted ? "bg-rose-600 hover:bg-rose-700 text-white" : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                    className={`p-3 pl-1 pr-2 rounded-r-full border-l border-zinc-300 dark:border-zinc-700/50 transition-all ${
+                      isMuted
+                        ? "bg-rose-600 hover:bg-rose-700 text-white"
+                        : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-l-0 border-zinc-200/80 dark:border-transparent"
                     }`}
                     title="Microphone settings"
                   >
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="top" className="w-64 bg-zinc-900 border-zinc-800 text-zinc-200">
-                  <div className="px-2 py-1.5 text-xs font-semibold text-zinc-400">Microphones</div>
+                <DropdownMenuContent align="center" side="top" className="w-64 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-xl">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">Microphones</div>
                   {audioDevices.length > 0 ? (
                     audioDevices.map((d) => (
                       <DropdownMenuItem
                         key={d.deviceId}
                         onClick={() => onSelectAudioDevice(d.deviceId)}
                         className={`text-xs cursor-pointer ${
-                          selectedAudioId === d.deviceId ? "text-red-400 font-medium" : ""
+                          selectedAudioId === d.deviceId ? "text-red-600 dark:text-red-400 font-medium" : ""
                         }`}
                       >
                         {d.label || `Microphone ${d.deviceId.slice(0, 5)}`}
                       </DropdownMenuItem>
                     ))
                   ) : (
-                    <div className="px-2 py-1 text-xs text-zinc-500">Default Microphone</div>
+                    <div className="px-2 py-1 text-xs text-zinc-400 dark:text-zinc-500">Default Microphone</div>
                   )}
-                  <DropdownMenuSeparator className="bg-zinc-800" />
+                  <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-800" />
                   <DropdownMenuItem
                     onClick={() => onToggleNoiseSuppression(!noiseSuppression)}
                     className="text-xs cursor-pointer justify-between"
                   >
                     <span>Noise Suppression</span>
-                    <span className={noiseSuppression ? "text-emerald-400" : "text-zinc-500"}>
+                    <span className={noiseSuppression ? "text-emerald-600 dark:text-emerald-400 font-bold" : "text-zinc-400 dark:text-zinc-500"}>
                       {noiseSuppression ? "On" : "Off"}
                     </span>
                   </DropdownMenuItem>
@@ -222,7 +224,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               className={`p-2.5 sm:p-3 rounded-full sm:rounded-none sm:rounded-l-full flex items-center justify-center transition-all ${
                 isCameraOff
                   ? "bg-rose-600 hover:bg-rose-700 text-white"
-                  : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                  : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
               }`}
               title={isCameraOff ? "Turn on camera (Ctrl+E)" : "Turn off camera (Ctrl+E)"}
             >
@@ -232,34 +234,36 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
-                    className={`p-3 pl-1 pr-2 rounded-r-full border-l border-zinc-700/50 transition-all ${
-                      isCameraOff ? "bg-rose-600 hover:bg-rose-700 text-white" : "bg-zinc-800 hover:bg-zinc-700 text-zinc-300"
+                    className={`p-3 pl-1 pr-2 rounded-r-full border-l border-zinc-300 dark:border-zinc-700/50 transition-all ${
+                      isCameraOff
+                        ? "bg-rose-600 hover:bg-rose-700 text-white"
+                        : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-300 border border-l-0 border-zinc-200/80 dark:border-transparent"
                     }`}
                     title="Camera settings"
                   >
                     <ChevronUp className="w-3.5 h-3.5" />
                   </button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="center" side="top" className="w-64 bg-zinc-900 border-zinc-800 text-zinc-200">
-                  <div className="px-2 py-1.5 text-xs font-semibold text-zinc-400">Cameras</div>
+                <DropdownMenuContent align="center" side="top" className="w-64 bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-800 dark:text-zinc-200 shadow-xl">
+                  <div className="px-2 py-1.5 text-xs font-semibold text-zinc-500 dark:text-zinc-400">Cameras</div>
                   {videoDevices.length > 0 ? (
                     videoDevices.map((d) => (
                       <DropdownMenuItem
                         key={d.deviceId}
                         onClick={() => onSelectVideoDevice(d.deviceId)}
                         className={`text-xs cursor-pointer ${
-                          selectedVideoId === d.deviceId ? "text-red-400 font-medium" : ""
+                          selectedVideoId === d.deviceId ? "text-red-600 dark:text-red-400 font-medium" : ""
                         }`}
                       >
                         {d.label || `Camera ${d.deviceId.slice(0, 5)}`}
                       </DropdownMenuItem>
                     ))
                   ) : (
-                    <div className="px-2 py-1 text-xs text-zinc-500">Default Camera</div>
+                    <div className="px-2 py-1 text-xs text-zinc-400 dark:text-zinc-500">Default Camera</div>
                   )}
-                  <DropdownMenuSeparator className="bg-zinc-800" />
+                  <DropdownMenuSeparator className="bg-zinc-200 dark:bg-zinc-800" />
                   <DropdownMenuItem onClick={onSwitchCamera} className="text-xs cursor-pointer flex items-center gap-2">
-                    <SwitchCamera className="w-3.5 h-3.5 text-zinc-400" />
+                    <SwitchCamera className="w-3.5 h-3.5 text-zinc-500 dark:text-zinc-400" />
                     <span>Switch Front / Rear Camera</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -270,7 +274,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {/* Switch Camera Button (Mobile direct toggle) */}
           <button
             onClick={onSwitchCamera}
-            className="sm:hidden p-2.5 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+            className="sm:hidden p-2.5 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             title="Switch front/rear camera"
           >
             <SwitchCamera className="w-4 h-4" />
@@ -282,7 +286,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             className={`hidden sm:flex p-2.5 sm:p-3 rounded-full items-center justify-center transition-all ${
               isScreenSharing
                 ? "bg-blue-600 hover:bg-blue-700 text-white"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             }`}
             title={isScreenSharing ? "Stop sharing screen" : "Share your screen"}
           >
@@ -295,7 +299,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             className={`p-2.5 sm:p-3 rounded-full flex items-center justify-center transition-all ${
               handRaised
                 ? "bg-amber-500 hover:bg-amber-600 text-black shadow-lg"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             }`}
             title={handRaised ? "Lower hand" : "Raise hand"}
           >
@@ -306,13 +310,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           <div className="relative">
             <button
               onClick={() => setShowReactions(!showReactions)}
-              className="p-2.5 sm:p-3 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-all"
+              className="p-2.5 sm:p-3 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent transition-all"
               title="Send emoji reaction"
             >
               <Smile className="w-4 h-4 sm:w-5 h-5" />
             </button>
             {showReactions && (
-              <div className="absolute bottom-12 sm:bottom-14 left-1/2 -translate-x-1/2 bg-zinc-900 border border-zinc-800 p-2 rounded-2xl shadow-2xl flex items-center gap-1 z-40 animate-in fade-in zoom-in-95">
+              <div className="absolute bottom-12 sm:bottom-14 left-1/2 -translate-x-1/2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-2 rounded-2xl shadow-2xl flex items-center gap-1 z-40 animate-in fade-in zoom-in-95">
                 {reactionsList.map((emoji) => (
                   <button
                     key={emoji}
@@ -320,7 +324,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                       onSendReaction(emoji);
                       setShowReactions(false);
                     }}
-                    className="hover:scale-125 transition-transform p-1 text-lg sm:text-xl rounded-lg hover:bg-zinc-800"
+                    className="hover:scale-125 transition-transform p-1 text-lg sm:text-xl rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800"
                   >
                     {emoji}
                   </button>
@@ -335,7 +339,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             className={`hidden sm:flex p-2.5 sm:p-3 rounded-full items-center justify-center transition-all ${
               isRecording
                 ? "bg-rose-600 hover:bg-rose-700 text-white animate-pulse"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             }`}
             title={isRecording ? "Stop recording meeting" : "Record meeting"}
           >
@@ -348,7 +352,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
               // HOST: Prominent "End" button
               <button
                 onClick={() => setShowLeaveDialog(!showLeaveDialog)}
-                className="p-2.5 sm:px-4 sm:py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-rose-950/40 cursor-pointer"
+                className="p-2.5 sm:px-4 sm:py-2.5 rounded-full bg-rose-600 hover:bg-rose-700 active:scale-95 text-white font-bold flex items-center justify-center gap-1.5 transition-all shadow-lg shadow-rose-950/30 cursor-pointer"
                 title="End meeting (Host)"
               >
                 <PhoneOff className="w-4 h-4 sm:w-5 h-5" />
@@ -368,18 +372,18 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
 
             {/* Host leave / end dialog: Centered Modal */}
             {isHost && showLeaveDialog && (
-              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
+              <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/75 backdrop-blur-sm animate-in fade-in duration-200">
                 {/* Backdrop click to dismiss */}
                 <div
                   className="absolute inset-0"
                   onClick={() => setShowLeaveDialog(false)}
                 />
-                <div className="relative w-full max-w-sm bg-zinc-900 border border-zinc-800 p-5 rounded-3xl shadow-2xl z-10 space-y-4 animate-in zoom-in-95 duration-200">
-                  <div className="flex items-center gap-2.5 text-rose-500 pb-2 border-b border-zinc-800">
-                    <PhoneOff className="w-5 h-5 text-rose-500" />
-                    <h3 className="text-sm sm:text-base font-bold text-white">End Video Call</h3>
+                <div className="relative w-full max-w-sm bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-5 rounded-3xl shadow-2xl z-10 space-y-4 animate-in zoom-in-95 duration-200">
+                  <div className="flex items-center gap-2.5 text-rose-600 pb-2 border-b border-zinc-200 dark:border-zinc-800">
+                    <PhoneOff className="w-5 h-5 text-rose-600" />
+                    <h3 className="text-sm sm:text-base font-bold text-zinc-900 dark:text-white">End Video Call</h3>
                   </div>
-                  <p className="text-xs text-zinc-300 leading-relaxed">
+                  <p className="text-xs text-zinc-600 dark:text-zinc-300 leading-relaxed">
                     You are the meeting host. Choose how you would like to end the call:
                   </p>
                   <div className="space-y-2 pt-1">
@@ -389,14 +393,14 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                         setShowLeaveDialog(false);
                         onEndCallForAll();
                       }}
-                      className="w-full text-left p-3 text-xs font-semibold text-rose-200 hover:text-white bg-rose-950/50 hover:bg-rose-900/80 border border-rose-800/60 rounded-2xl transition-all flex items-center gap-3 cursor-pointer group shadow-lg"
+                      className="w-full text-left p-3 text-xs font-semibold text-rose-700 dark:text-rose-200 hover:text-rose-900 dark:hover:text-white bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/50 dark:hover:bg-rose-900/80 border border-rose-200 dark:border-rose-800/60 rounded-2xl transition-all flex items-center gap-3 cursor-pointer group shadow-sm"
                     >
-                      <ShieldAlert className="w-5 h-5 text-rose-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <ShieldAlert className="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 group-hover:scale-110 transition-transform" />
                       <div>
-                        <div className="font-bold text-rose-200 group-hover:text-white text-xs sm:text-sm">
+                        <div className="font-bold text-rose-700 dark:text-rose-200 group-hover:text-rose-900 dark:group-hover:text-white text-xs sm:text-sm">
                           End meeting for all
                         </div>
-                        <div className="text-[10px] text-rose-400/80 font-normal">
+                        <div className="text-[10px] text-rose-600/80 dark:text-rose-400/80 font-normal">
                           Disconnects all participants and returns to home
                         </div>
                       </div>
@@ -407,14 +411,14 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                         setShowLeaveDialog(false);
                         onLeaveCall();
                       }}
-                      className="w-full text-left p-3 text-xs font-medium text-zinc-300 hover:text-white bg-zinc-800/80 hover:bg-zinc-800 border border-zinc-700/60 rounded-2xl transition-all flex items-center gap-3 cursor-pointer group"
+                      className="w-full text-left p-3 text-xs font-medium text-zinc-700 dark:text-zinc-300 hover:text-zinc-900 dark:hover:text-white bg-zinc-100 dark:bg-zinc-800/80 hover:bg-zinc-200 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-700/60 rounded-2xl transition-all flex items-center gap-3 cursor-pointer group"
                     >
-                      <LogOut className="w-5 h-5 text-zinc-400 shrink-0 group-hover:scale-110 transition-transform" />
+                      <LogOut className="w-5 h-5 text-zinc-500 dark:text-zinc-400 shrink-0 group-hover:scale-110 transition-transform" />
                       <div>
-                        <div className="font-semibold text-zinc-200 group-hover:text-white text-xs sm:text-sm">
+                        <div className="font-semibold text-zinc-800 dark:text-zinc-200 group-hover:text-zinc-900 dark:group-hover:text-white text-xs sm:text-sm">
                           Leave meeting only
                         </div>
-                        <div className="text-[10px] text-zinc-400 font-normal">
+                        <div className="text-[10px] text-zinc-500 dark:text-zinc-400 font-normal">
                           Only leave yourself; keep call active for others
                         </div>
                       </div>
@@ -423,7 +427,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
                   <button
                     type="button"
                     onClick={() => setShowLeaveDialog(false)}
-                    className="w-full py-2 text-center text-xs text-zinc-400 hover:text-white hover:bg-zinc-800/60 rounded-xl transition-colors cursor-pointer"
+                    className="w-full py-2 text-center text-xs text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white hover:bg-zinc-100 dark:hover:bg-zinc-800/60 rounded-xl transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
@@ -441,12 +445,12 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             className={`relative p-2.5 sm:p-3 rounded-full transition-all ${
               isParticipantsOpen
                 ? "bg-red-600 text-white"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             }`}
             title="View participants"
           >
             <Users className="w-4 h-4 sm:w-5 h-5" />
-            <span className="absolute -top-1 -right-1 bg-zinc-700 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded-full border border-zinc-900">
+            <span className="absolute -top-1 -right-1 bg-zinc-200 dark:bg-zinc-700 text-zinc-800 dark:text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded-full border border-white dark:border-zinc-900 shadow-xs">
               {participantsCount}
             </span>
           </button>
@@ -457,13 +461,13 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
             className={`relative p-2.5 sm:p-3 rounded-full transition-all ${
               isChatOpen
                 ? "bg-red-600 text-white"
-                : "bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
+                : "bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent"
             }`}
             title="In-call chat"
           >
             <MessageSquare className="w-4 h-4 sm:w-5 h-5" />
             {unreadChatCount > 0 && (
-              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded-full border border-zinc-900 animate-pulse">
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[9px] sm:text-[10px] font-bold px-1.5 py-0.2 rounded-full border border-white dark:border-zinc-900 animate-pulse">
                 {unreadChatCount}
               </span>
             )}
@@ -472,7 +476,7 @@ export const ControlsBar: React.FC<ControlsBarProps> = ({
           {/* Settings Modal Button */}
           <button
             onClick={onOpenSettings}
-            className="hidden md:flex p-2.5 sm:p-3 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition-all"
+            className="hidden md:flex p-2.5 sm:p-3 rounded-full bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-zinc-700 dark:text-zinc-200 border border-zinc-200/80 dark:border-transparent transition-all"
             title="Meeting settings"
           >
             <Settings className="w-4 h-4 sm:w-5 h-5" />

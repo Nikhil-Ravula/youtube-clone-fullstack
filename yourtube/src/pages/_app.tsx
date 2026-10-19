@@ -20,9 +20,9 @@ export default function App({ Component, pageProps }: AppProps) {
     return (
       <UserProvider>
         <SidebarProvider>
-          <div className="min-h-screen bg-zinc-950 text-white">
+          <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-150">
             <title>YourTube Meet</title>
-            <Toaster theme="dark" richColors closeButton duration={3000} position="bottom-right" />
+            <Toaster richColors closeButton duration={3000} position="bottom-right" />
             <SignInModal />
             <RazorpayCheckoutModal />
             <Component {...pageProps} />

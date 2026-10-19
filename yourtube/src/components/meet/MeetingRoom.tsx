@@ -286,28 +286,28 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({
   const unpinnedTiles = pinnedTile ? tiles.filter((t) => t.id !== pinnedSocketId) : tiles;
 
   return (
-    <div className="relative w-full h-[100dvh] max-h-[100dvh] min-h-[100dvh] bg-zinc-950 text-white flex flex-col overflow-hidden select-none">
+    <div className="relative w-full h-[100dvh] max-h-[100dvh] min-h-[100dvh] bg-slate-100 dark:bg-zinc-950 text-zinc-900 dark:text-white flex flex-col overflow-hidden select-none transition-colors duration-150">
       {/* Floating Reaction Emojis Animation Layer */}
       <ReactionOverlay reactions={reactions} />
 
       {/* Top Header Bar */}
-      <header className="h-11 sm:h-14 border-b border-zinc-900 bg-zinc-950/80 backdrop-blur-md px-2.5 sm:px-4 flex items-center justify-between z-20 shrink-0">
+      <header className="h-11 sm:h-14 border-b border-zinc-200 dark:border-zinc-900 bg-white/90 dark:bg-zinc-950/80 backdrop-blur-md px-2.5 sm:px-4 flex items-center justify-between z-20 shrink-0">
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
             <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse shrink-0" />
-            <h2 className="text-xs sm:text-sm font-semibold text-zinc-100 truncate max-w-[100px] sm:max-w-xs md:max-w-md">
+            <h2 className="text-xs sm:text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate max-w-[100px] sm:max-w-xs md:max-w-md">
               {meetingTitle}
             </h2>
           </div>
 
           {/* Synchronized Call Elapsed Timer Pill */}
-          <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-zinc-900 border border-zinc-800 text-zinc-200 font-mono text-[11px] sm:text-xs shrink-0 shadow-sm">
+          <div className="flex items-center gap-1.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-200 font-mono text-[11px] sm:text-xs shrink-0 shadow-xs">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
             <span>{formatDuration(callDuration)}</span>
           </div>
 
           {roomSettings.isLocked && (
-            <span className="hidden sm:flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold bg-rose-950/60 border border-rose-700/60 text-rose-300 px-1.5 py-0.5 rounded-full shrink-0">
+            <span className="hidden sm:flex items-center gap-1 text-[10px] sm:text-[11px] font-semibold bg-rose-100 dark:bg-rose-950/60 border border-rose-300 dark:border-rose-700/60 text-rose-700 dark:text-rose-300 px-1.5 py-0.5 rounded-full shrink-0">
               <Lock className="w-3 h-3" /> Locked
             </span>
           )}
@@ -317,17 +317,17 @@ export const MeetingRoom: React.FC<MeetingRoomProps> = ({
           {/* Room ID and Copy Button */}
           <button
             onClick={handleCopyLink}
-            className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-xs text-zinc-300 transition-colors"
+            className="flex items-center gap-1 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-xs text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
             title="Copy meeting link"
           >
             <span className="font-mono text-[10px] sm:text-[11px]">{roomId}</span>
-            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+            {copiedLink ? <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
 
           {/* Fullscreen Toggle */}
           <button
             onClick={handleToggleFullscreen}
-            className="p-1.5 sm:p-2 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-300 transition-colors"
+            className="p-1.5 sm:p-2 rounded-xl bg-zinc-100 hover:bg-zinc-200 dark:bg-zinc-900 dark:hover:bg-zinc-800 border border-zinc-200 dark:border-zinc-800 text-zinc-700 dark:text-zinc-300 transition-colors shadow-xs"
             title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
           >
             {isFullscreen ? <Minimize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" /> : <Maximize2 className="w-3.5 h-3.5 sm:w-4 sm:h-4" />}
