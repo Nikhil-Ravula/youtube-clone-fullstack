@@ -1,0 +1,16 @@
+# Netlify Configuration for YourTube (Next.js Fullstack Monorepo)
+
+[build]
+  # Base directory where Next.js lives
+  base = "yourtube"
+  # Build command inside the yourtube directory
+  command = "npm run build"
+  # Next.js output publish directory
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  SECRETS_SCAN_ENABLED = "false"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
