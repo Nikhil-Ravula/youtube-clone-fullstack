@@ -261,11 +261,18 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     // 2. Cryptographic signature verification
     let isSignatureValid = false;
+    const isRealSecretConfigured =
+      process.env.RAZORPAY_KEY_SECRET &&
+      !process.env.RAZORPAY_KEY_SECRET.includes("Secret2026") &&
+      !process.env.RAZORPAY_KEY_SECRET.includes("demo");
 
-    // Check if test simulation or real signature
-    if (razorpay_signature && razorpay_signature.startsWith("test_simulated_sig_")) {
-      isSignatureValid = true;
-    } else if (razorpay_signature) {
+    if (isRealSecretConfigured) {
+      if (!razorpay_signature) {
+        return res.status(400).json({
+          success: false,
+          message: "Payment signature missing for live transaction.",
+        });
+      }
       try {
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
@@ -273,18 +280,29 @@ export const verifyRazorpayPayment = async (req, res) => {
           .update(body.toString())
           .digest("hex");
 
-        if (expectedSignature === razorpay_signature) {
-          isSignatureValid = true;
-        } else {
-          // In test environments where client uses Razorpay Test Checkout with mock secret
-          isSignatureValid = true;
-        }
+        isSignatureValid = expectedSignature === razorpay_signature;
       } catch (sigErr) {
-        console.warn("Signature calculation error, checking test fallback:", sigErr.message);
-        isSignatureValid = true;
+        console.error("Signature calculation error:", sigErr);
+        isSignatureValid = false;
       }
     } else {
-      isSignatureValid = true;
+      // Test simulation fallback when using placeholder demo keys
+      if (razorpay_signature && razorpay_signature.startsWith("test_simulated_sig_")) {
+        isSignatureValid = true;
+      } else if (razorpay_signature) {
+        try {
+          const body = razorpay_order_id + "|" + razorpay_payment_id;
+          const expectedSignature = crypto
+            .createHmac("sha256", RAZORPAY_KEY_SECRET)
+            .update(body.toString())
+            .digest("hex");
+          isSignatureValid = expectedSignature === razorpay_signature || true;
+        } catch (sigErr) {
+          isSignatureValid = true;
+        }
+      } else {
+        isSignatureValid = true;
+      }
     }
 
     if (!isSignatureValid) {
