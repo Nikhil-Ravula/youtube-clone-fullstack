@@ -93,6 +93,9 @@ const addIceCandidateSafely = async (pc: RTCPeerConnection, cand: any) => {
 };
 
 const getSocketUrl = () => {
+  if (process.env.NEXT_PUBLIC_BACKEND_URL) {
+    return process.env.NEXT_PUBLIC_BACKEND_URL.replace(/\/+$/, "");
+  }
   if (typeof window !== "undefined") {
     const isLocalhost =
       window.location.hostname === "localhost" ||
@@ -102,9 +105,8 @@ const getSocketUrl = () => {
     }
   }
   return (
-    process.env.NEXT_PUBLIC_BACKEND_URL ||
     process.env.BACKEND_URL ||
-    "http://localhost:5000"
+    "https://youtube-backend-rxbz.onrender.com"
   );
 };
 

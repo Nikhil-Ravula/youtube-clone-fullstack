@@ -12,20 +12,10 @@ export const getMediaUrl = (filepath?: string): string => {
 
   const normalized = cleanPath.startsWith("/") ? cleanPath : `/${cleanPath}`;
 
-  if (typeof window !== "undefined") {
-    const isLocalhost =
-      window.location.hostname === "localhost" ||
-      window.location.hostname === "127.0.0.1";
-    // On ngrok, LAN, or remote devices, use relative path so Next.js proxies it
-    if (!isLocalhost) {
-      return normalized;
-    }
-  }
-
   const backendUrl =
     process.env.NEXT_PUBLIC_BACKEND_URL ||
     process.env.BACKEND_URL ||
-    "http://localhost:5000";
+    "https://youtube-backend-rxbz.onrender.com";
 
   return `${backendUrl.replace(/\/+$/, "")}${normalized}`;
 };

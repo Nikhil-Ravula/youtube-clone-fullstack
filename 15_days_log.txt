@@ -1,0 +1,44 @@
+Day 1: Architecture, Plan Limits & Quota Policy Specification
+Designed the controlled video download management architecture with strict multi-tier daily quota enforcement (Free: 1 video/day, Bronze: 5 videos/day, Silver: 15 videos/day, and Gold: 50 videos/day), drafted the complete pre-download verification lifecycle, and defined the daily UTC boundary reset schedule.
+
+Day 2: MongoDB Audit Schema Design & Indexing Optimization
+Created the Download.js Mongoose data model capturing comprehensive audit telemetry (user ID, video ID, download timestamp, IP address, device type, browser, OS, full user-agent, device ID, subscription plan, file size, status, and failure reason) and added compound indexes for high-speed 24-hour grace period lookups.
+
+Day 3: Quota Calculation Engine & UTC Boundary Logic
+Developed the backend quota calculation utility (getUtcDayBounds and getUserQuota) to dynamically aggregate completed downloads within the current 00:00:00 UTC day, calculate remaining allowances, and return real-time seconds-until-reset countdown data for client interfaces.
+
+Day 4: Pre-Download Verification & Video Accessibility Interceptor
+Built the /download/authorize pre-flight endpoint to validate user authentication, cross-reference active subscription status, verify physical video file existence on local server storage to prevent 404 streaming errors, and ensure quota availability before issuing authorization.
+
+Day 5: Single-Use Cryptographic Download Token Engine
+Implemented a secure, short-lived (5-minute TTL) cryptographic token generator using crypto.randomBytes(32) stored in an in-memory token registry to enforce one-time authorization and prevent URL sharing, hotlinking, and unauthorized direct file access.
+
+Day 6: Secure Chunked File Streaming Pipeline
+Engineered the /download/file/:videoId streaming controller utilizing Node.js fs.createReadStream with RFC 6266 attachment Content-Disposition headers, anti-caching HTTP directives, dynamic MIME type detection, and real-time chunked data piping.
+
+Day 7: Client Disconnection & Interrupted Download Recovery
+Integrated stream lifecycle listeners (req.on('close') and readStream.on('error')) to detect aborted socket connections and network drops mid-stream, automatically transitioning audit records to a "failed" state with diagnostic failure reasons while preserving quota integrity.
+
+Day 8: Replay Attack Defense & Repeated Refresh Throttling
+Hardened the streaming controller with atomic token deletion upon stream initiation to immediately block repeated browser page refreshes, automated scraping scripts, and replay attacks with instant 401 Unauthorized responses.
+
+Day 9: 24-Hour Duplicate Protection & Grace Period Logic
+Engineered the duplicate download exemption mechanism allowing users to re-download previously completed videos within a 24-hour window without deducting from their daily quota, preventing user penalties for accidental file loss or multi-device re-downloads.
+
+Day 10: Dynamic Subscription Expiry & Auto-Downgrade Interceptor
+Implemented real-time subscription status validation (getEffectivePlan and checkAndSyncSubscription) that detects expired memberships upon every download request, automatically downgrades users to the Free tier, and restricts them to the 1-download-per-day cap.
+
+Day 11: Multi-Device Telemetry, Fingerprinting & Registered Device Limiting
+Integrated User-Agent parsing and device fingerprinting to track client hardware (Desktop, Mobile, Tablet) and browser engines, storing unique device identifiers on user profiles to detect simultaneous cross-device streaming and enforce plan device limits.
+
+Day 12: Dedicated Downloads Library UI (DownloadsContent.tsx)
+Built the responsive Downloads dashboard within the user profile displaying downloaded video cards with high-resolution thumbnails, channel titles, file size indicators, download dates, status pills (Completed, In Progress, Failed), and redownload triggers.
+
+Day 13: Live Quota Dashboard, Reset Countdown & Upgrade Modal
+Developed the interactive quota banner showing active plan badges, visual progress meters, real-time seconds countdown until 00:00 UTC reset, and integrated the subscription upgrade modal enabling instant plan switches with dynamic quota expansion.
+
+Day 14: Audit History Management, Search/Filter & Soft-Deletion
+Added real-time search, status filtering (All, Completed, Failed), and soft-deletion (isDeleted: true) on user libraries allowing users to clear their UI history while permanently maintaining backend database records for administrative audit compliance.
+
+Day 15: Edge Case Stress Testing, Concurrency QA & Production Finalization
+Conducted rigorous end-to-end stress testing simulating simultaneous multi-device downloads, rapid burst requests, boundary tests at 23h 59m, and verified seamless integration between the Express backend and Next.js frontend with zero TypeScript errors.
