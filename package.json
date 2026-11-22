@@ -1,0 +1,13 @@
+{
+  "name": "youtube-clone-fullstack",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack YouTube Clone with WebRTC video calling, membership tiers, and download management",
+  "scripts": {
+    "dev": "npm --prefix yourtube run dev",
+    "frontend": "npm --prefix yourtube run dev",
+    "backend": "npm --prefix server start",
+    "build": "npm --prefix yourtube run build"
+  }
+}
+

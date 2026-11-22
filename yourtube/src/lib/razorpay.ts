@@ -71,11 +71,13 @@ export const initiateRazorpayPayment = async ({
   onFailure,
   onDismiss,
 }: RazorpayCheckoutParams) => {
+  const activeKey = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || orderData.keyId;
+
   // If the key is a demo / test placeholder key, directly open our interactive Razorpay Checkout Modal
   // This prevents Razorpay CDN from throwing "Uh! oh! Something went wrong" due to unregistered API keys.
-  if (isDemoRazorpayKey(orderData.keyId)) {
+  if (isDemoRazorpayKey(activeKey)) {
     openRazorpayModal({
-      orderData,
+      orderData: { ...orderData, keyId: activeKey },
       userId,
       onSuccess,
       onFailure,
@@ -90,7 +92,7 @@ export const initiateRazorpayPayment = async ({
 
     if (isLoaded && typeof window.Razorpay === "function") {
       const options = {
-        key: orderData.keyId,
+        key: activeKey,
         amount: orderData.amount, // in paise
         currency: orderData.currency || "INR",
         name: "YourTube Subscriptions",
