@@ -13,8 +13,5 @@
 **/out/
 **/build/
 
-# Uploaded media files
-**/uploads/
-
 .exe
 *.exe

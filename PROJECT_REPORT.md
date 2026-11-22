@@ -249,3 +249,4 @@ The **YourTube** project demonstrates a production-grade, resilient full-stack a
 1. **Adaptive Bitrate Streaming (HLS/DASH):** Implementing multi-bitrate video transcoding via FFmpeg.
 2. **P2P Torrent Streaming:** Utilizing WebTorrent protocols for high-bandwidth decentralized peer distribution.
 3. **Mobile Native App:** Wrapping the Next.js API in React Native / Expo for iOS and Android deployment.
+

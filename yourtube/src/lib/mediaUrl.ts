@@ -17,5 +17,5 @@ export const getMediaUrl = (filepath?: string): string => {
     process.env.BACKEND_URL ||
     "https://youtube-backend-rxbz.onrender.com";
 
-  return `${backendUrl.replace(/\/+$/, "")}${normalized}`;
+  return `${backendUrl.replace(/\/+$/, "")}${encodeURI(normalized)}`;
 };

@@ -1,5 +1,5 @@
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import { useState, useEffect, createContext, useContext, useCallback, useRef } from "react";
 import { provider, auth } from "./firebase";
 import axiosInstance from "./axiosinstance";
 import { getDeviceTelemetry } from "./deviceFingerprint";
@@ -13,6 +13,7 @@ export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const [authError, setAuthError] = useState(null);
+  const isLoggingOutRef = useRef(false);
 
   // Security OTP Challenge Modal state
   const [securityChallenge, setSecurityChallenge] = useState(null);
@@ -130,6 +131,12 @@ export const UserProvider = ({ children }) => {
   };
 
   const logout = async () => {
+    isLoggingOutRef.current = true;
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.error("Error during sign out:", error);
+    }
     setUser(null);
     if (typeof window !== "undefined") {
       try {
@@ -138,11 +145,10 @@ export const UserProvider = ({ children }) => {
         console.error("Error clearing user from localStorage:", e);
       }
     }
-    try {
-      await signOut(auth);
-    } catch (error) {
-      console.error("Error during sign out:", error);
-    }
+    toast.success("Signed out successfully");
+    setTimeout(() => {
+      isLoggingOutRef.current = false;
+    }, 1500);
   };
 
   /**
@@ -237,6 +243,8 @@ export const UserProvider = ({ children }) => {
   // Sync Firebase authentication state
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseuser) => {
+      if (isLoggingOutRef.current) return;
+      if (!firebaseuser) return;
       if (firebaseuser && !user) {
         try {
           const telemetry = getDeviceTelemetry();
