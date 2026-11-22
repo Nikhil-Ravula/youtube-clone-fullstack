@@ -9,21 +9,31 @@ import {
 } from "../utils/plansConfig.js";
 import { sendSubscriptionConfirmationEmail } from "../utils/emailService.js";
 
-// Razorpay test credentials (can be set via env or defaults to standard Razorpay test mock keys)
-const RAZORPAY_KEY_ID = process.env.RAZORPAY_KEY_ID || "rzp_test_YourTubeDemo2026";
-const RAZORPAY_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET || "rzp_secret_YourTubeSecret2026";
+// Lazy dynamic Razorpay configuration loader
+export const getRazorpayConfig = () => {
+  const keyId = (process.env.RAZORPAY_KEY_ID || "").trim() || "rzp_test_YourTubeDemo2026";
+  const keySecret = (process.env.RAZORPAY_KEY_SECRET || "").trim() || "rzp_secret_YourTubeSecret2026";
+  const isReal = Boolean(
+    process.env.RAZORPAY_KEY_ID &&
+    process.env.RAZORPAY_KEY_SECRET &&
+    !process.env.RAZORPAY_KEY_ID.includes("Demo") &&
+    !process.env.RAZORPAY_KEY_ID.includes("demo")
+  );
 
-let razorpayClient = null;
-try {
-  if (process.env.RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET) {
-    razorpayClient = new Razorpay({
-      key_id: RAZORPAY_KEY_ID,
-      key_secret: RAZORPAY_KEY_SECRET,
-    });
+  let client = null;
+  if (keyId && keySecret) {
+    try {
+      client = new Razorpay({
+        key_id: keyId,
+        key_secret: keySecret,
+      });
+    } catch (err) {
+      console.warn("Razorpay client initialization notice:", err.message);
+    }
   }
-} catch (err) {
-  console.log("Razorpay client initialized in test mode fallback:", err.message);
-}
+
+  return { keyId, keySecret, isReal, client };
+};
 
 /**
  * 1. GET /membership/plans
@@ -31,10 +41,12 @@ try {
  */
 export const getPlans = async (req, res) => {
   try {
+    const { keyId, isReal } = getRazorpayConfig();
     return res.status(200).json({
       success: true,
       plans: SUBSCRIPTION_PLANS,
-      keyId: RAZORPAY_KEY_ID,
+      keyId,
+      isReal,
     });
   } catch (error) {
     console.error("Error retrieving plans:", error);
@@ -143,10 +155,11 @@ export const createRazorpayOrder = async (req, res) => {
     const receipt = `rcpt_${Date.now()}_${Math.floor(Math.random() * 1000)}`;
     const invoiceNumber = generateInvoiceNumber();
 
+    const { keyId, isReal, client: razorpayClient } = getRazorpayConfig();
     let orderId = `order_test_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
 
     // Try real Razorpay Order creation if live API keys are provided
-    if (razorpayClient) {
+    if (razorpayClient && isReal) {
       try {
         const rzpOrder = await razorpayClient.orders.create({
           amount: amountInPaise,
@@ -163,7 +176,7 @@ export const createRazorpayOrder = async (req, res) => {
           orderId = rzpOrder.id;
         }
       } catch (rzpErr) {
-        console.warn("Razorpay API call failed, falling back to secure test order:", rzpErr.message);
+        console.warn("Razorpay API order creation warning, using fallback order:", rzpErr.message || rzpErr);
       }
     }
 
@@ -201,7 +214,8 @@ export const createRazorpayOrder = async (req, res) => {
       amount: amountInPaise, // in paise for Razorpay Checkout
       amountInInr,
       currency: "INR",
-      keyId: RAZORPAY_KEY_ID,
+      keyId,
+      isReal,
       invoiceNumber,
       plan,
       billingCycle,
@@ -261,12 +275,9 @@ export const verifyRazorpayPayment = async (req, res) => {
 
     // 2. Cryptographic signature verification
     let isSignatureValid = false;
-    const isRealSecretConfigured =
-      process.env.RAZORPAY_KEY_SECRET &&
-      !process.env.RAZORPAY_KEY_SECRET.includes("Secret2026") &&
-      !process.env.RAZORPAY_KEY_SECRET.includes("demo");
+    const { keySecret: activeSecret, isReal } = getRazorpayConfig();
 
-    if (isRealSecretConfigured) {
+    if (isReal) {
       if (!razorpay_signature) {
         return res.status(400).json({
           success: false,
@@ -276,11 +287,14 @@ export const verifyRazorpayPayment = async (req, res) => {
       try {
         const body = razorpay_order_id + "|" + razorpay_payment_id;
         const expectedSignature = crypto
-          .createHmac("sha256", RAZORPAY_KEY_SECRET)
+          .createHmac("sha256", activeSecret)
           .update(body.toString())
           .digest("hex");
 
         isSignatureValid = expectedSignature === razorpay_signature;
+        if (!isSignatureValid) {
+          console.warn(`Signature mismatch: expected ${expectedSignature}, received ${razorpay_signature}`);
+        }
       } catch (sigErr) {
         console.error("Signature calculation error:", sigErr);
         isSignatureValid = false;
@@ -293,7 +307,7 @@ export const verifyRazorpayPayment = async (req, res) => {
         try {
           const body = razorpay_order_id + "|" + razorpay_payment_id;
           const expectedSignature = crypto
-            .createHmac("sha256", RAZORPAY_KEY_SECRET)
+            .createHmac("sha256", activeSecret)
             .update(body.toString())
             .digest("hex");
           isSignatureValid = expectedSignature === razorpay_signature || true;

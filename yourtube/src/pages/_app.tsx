@@ -9,6 +9,7 @@ import type { AppProps } from "next/app";
 import { UserProvider } from "../lib/AuthContext";
 import { SidebarProvider } from "../lib/SidebarContext";
 import { useRouter } from "next/router";
+import Script from "next/script";
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
@@ -22,6 +23,11 @@ export default function App({ Component, pageProps }: AppProps) {
         <SidebarProvider>
           <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 text-zinc-900 dark:text-white transition-colors duration-150">
             <title>YourTube Meet</title>
+            <Script
+              id="razorpay-checkout-sdk"
+              src="https://checkout.razorpay.com/v1/checkout.js"
+              strategy="lazyOnload"
+            />
             <Toaster richColors closeButton duration={3000} position="bottom-right" />
             <SignInModal />
             <RazorpayCheckoutModal />
@@ -37,6 +43,11 @@ export default function App({ Component, pageProps }: AppProps) {
       <SidebarProvider>
         <div className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 flex flex-col transition-colors duration-150">
           <title>Your-Tube Clone</title>
+          <Script
+            id="razorpay-checkout-sdk"
+            src="https://checkout.razorpay.com/v1/checkout.js"
+            strategy="lazyOnload"
+          />
           <Header />
           <Toaster richColors closeButton duration={3000} position="bottom-right" />
           <SignInModal />
